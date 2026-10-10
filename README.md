@@ -1,0 +1,1 @@
+# Fundamental-och-turnaround-screener
