@@ -1,0 +1,79 @@
+name: Fundamental och turnaround screen
+
+on:
+  schedule:
+    # GitHub kör schemat i UTC och känner inte till sommartid. Därför schemaläggs både
+    # sommar- och vintertid, och steget "check" släpper bara igenom körningen när klockan
+    # i Stockholm faktiskt är 10 eller 16. Bara vardagar, eftersom börserna är stängda på helger.
+    - cron: "0 8 * * 1-5"    # 10:00 sommartid, 09:00 vintertid
+    - cron: "0 9 * * 1-5"    # 11:00 sommartid, 10:00 vintertid
+    - cron: "0 14 * * 1-5"   # 16:00 sommartid, 15:00 vintertid
+    - cron: "0 15 * * 1-5"   # 17:00 sommartid, 16:00 vintertid
+  workflow_dispatch:         # knapp "Run workflow" för manuell körning
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.guard.outputs.run }}
+    steps:
+      - id: guard
+        run: |
+          HOUR=$(TZ=Europe/Stockholm date +%H)
+          echo "Klockan i Stockholm: $(TZ=Europe/Stockholm date '+%Y-%m-%d %H:%M')"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$HOUR" = "10" ] || [ "$HOUR" = "16" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Fel timme (sommar-/vintertidsvakt), hoppar över."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      # Nyckeltal ändras långsamt och cachas mellan körningarna (kurser hämtas alltid färska).
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: info-${{ github.run_id }}
+          restore-keys: info-
+
+      - name: Kör screenerna
+        run: python build.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

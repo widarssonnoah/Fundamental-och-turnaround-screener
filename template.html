@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamental och turnaround screen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDF0F3;--card:#fff;--ink:#14212E;--mute:#5E6E7E;--line:#D6DDE4;--accent:#0F766E;--near:#A16207;--part:#C2570C;--no:#B42318;--miss:#8A97A4;--hover:#F5F8FA}
+@media(prefers-color-scheme:dark){:root{--bg:#0E1620;--card:#16212D;--ink:#E5ECF2;--mute:#94A4B4;--line:#27374A;--accent:#2DD4BF;--near:#E4B13C;--part:#F08A4B;--no:#F2766B;--miss:#7C8B99;--hover:#1B2836}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:1240px;margin:0 auto;padding:28px 20px 64px}
+h1{font-size:30px;line-height:1.15;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 18px;max-width:75ch}
+.demo{background:var(--no);color:#fff;padding:8px 14px;border-radius:8px;margin-bottom:14px;font-weight:600}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tabs button{font:inherit;font-weight:600;color:var(--mute);background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;cursor:pointer;white-space:nowrap;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tabs .cnt{font-weight:400;color:var(--mute);margin-left:6px;font-size:13px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.note{border-left:3px solid var(--near);padding:8px 12px;margin-bottom:14px;background:var(--card);border-radius:0 8px 8px 0;font-size:14px;color:var(--mute)}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:end}
+.controls label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
+input[type=search],select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 10px;min-width:170px}
+input[type=range]{accent-color:var(--accent)}
+details{margin-top:12px}summary{cursor:pointer;font-weight:600;font-size:14px}
+details p,details li{color:var(--mute);font-size:14px;max-width:84ch}
+.sliders{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 22px;margin-top:12px}
+.sliders label{font-size:13px;color:var(--mute)}.sliders b{color:var(--ink);float:right}
+button.link{font:inherit;background:none;border:0;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:980px}
+th{font-weight:600;font-size:13px;color:var(--mute);text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;user-select:none}
+th.n,td.n{text-align:right;white-space:nowrap}th[aria-sort]{color:var(--ink)}
+tr.row{cursor:pointer}tr.row:hover td{background:var(--hover)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.rk{color:var(--mute);width:40px;padding-left:14px}
+.nm{background:none;border:0;padding:0;font:inherit;font-weight:600;color:var(--ink);text-align:left;cursor:pointer}
+.nm:focus-visible,th:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tk{display:block;font-size:12px;color:var(--mute);font-weight:400}
+.sc{width:130px}.sc b{font-size:18px}.of{color:var(--mute);font-size:12px;margin-left:2px}
+.bar{height:5px;border-radius:3px;background:var(--line);margin-top:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.heat{text-align:center;min-width:64px;font-size:14px}.heat.na{color:var(--miss)}
+.pos{color:var(--accent)}.neg{color:var(--no)}
+tr.det>td{background:var(--bg);padding:0;border-bottom:1px solid var(--line)}
+.dg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:28px;padding:20px 18px 24px}
+@media(max-width:900px){.dg{grid-template-columns:1fr}}
+.dg h3{margin:0 0 6px;font-size:16px}.dg h4{margin:18px 0 6px;font-size:14px}
+.dg p{margin:0 0 10px;color:var(--mute);font-size:14px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:14px;margin:12px 0}.facts dt{color:var(--mute)}.facts dd{margin:0}
+ul.pl{margin:0;padding-left:18px;font-size:14px}ul.pl li{margin:3px 0}
+ul.pl.s li::marker{color:var(--accent)}ul.pl.w li::marker{color:var(--no)}
+svg.ch{width:100%;height:auto;display:block;margin-top:8px}
+.lg{font-size:12px;color:var(--mute);display:flex;gap:14px;flex-wrap:wrap}.lg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px}
+.ct{width:100%;border-collapse:collapse;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ct th{cursor:default;padding:7px 10px;background:var(--card)}
+.ct td{padding:8px 10px;font-size:14px}
+.ct tr.ch td{background:var(--hover);font-weight:600;padding:7px 10px}
+.rl{display:block;font-size:12px;color:var(--mute);font-weight:400;margin-top:1px;max-width:52ch}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.ok{color:var(--accent)}.near{color:var(--near)}.part{color:var(--part)}.no{color:var(--no)}.miss,.na{color:var(--miss)}
+.pt{width:96px}.pt .bar{width:70px}
+a{color:var(--accent)}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+footer{margin-top:22px;color:var(--mute);font-size:13px;max-width:90ch}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>Fundamental och turnaround screen</h1>
+<p class="sub" id="sub"></p>
+<div class="demo" id="demo" hidden>Demodata. Siffrorna i den här rapporten är påhittade och får inte användas som underlag.</div>
+
+<div class="tabs" role="tablist" aria-label="Screener">
+  <button role="tab" id="tab-fund" aria-controls="panel-fund" aria-selected="true">Fundamental<span class="cnt" id="cnt-fund"></span></button>
+  <button role="tab" id="tab-turn" aria-controls="panel-turn" aria-selected="false" tabindex="-1">Turnaround, tidig fas<span class="cnt" id="cnt-turn"></span></button>
+</div>
+<noscript><p>Rapporten kräver JavaScript.</p></noscript>
+
+<!-- ───────────── FUNDAMENTAL ───────────── -->
+<section id="panel-fund" role="tabpanel" aria-labelledby="tab-fund">
+  <div class="note" id="f_note" hidden></div>
+  <div class="panel">
+    <div class="controls">
+      <label>Sök bolag eller ticker<input type="search" id="f_q" placeholder="t.ex. Volvo"></label>
+      <label>Sektor<select id="f_sec"><option value="">Alla sektorer</option></select></label>
+      <label>Land<select id="f_land"><option value="">Alla länder</option></select></label>
+      <label>Börsvärde<select id="f_cap"><option value="">Alla klasser</option></select></label>
+      <label>Lägsta totalpoäng: <span id="f_minv">0</span><input type="range" id="f_min" min="0" max="90" value="0"></label>
+    </div>
+    <details>
+      <summary>Justera vikter mellan kategorierna</summary>
+      <div class="sliders" id="f_sl"></div>
+      <p style="margin-top:10px"><button class="link" id="f_reset">Återställ standardvikter</button></p>
+    </details>
+    <details>
+      <summary>Så fungerar poängen</summary>
+      <p>Varje bolag bedöms mot ett 25-tal kriterier. Ett fullt uppfyllt kriterium ger 100 poäng, ett bolag som är halvvägs till kravet får 50 poäng, och ett som ligger helt fel får 0 poäng. Inget bolag sorteras bort för att ett krav missas.</p>
+      <p>Fokus är lågt värderade bolag som just börjat vända uppåt. Kategorin Vändning belönar bolag som fallit men nu visar tidiga tecken på bottning, som färsk EMA-korsning, studs från botten och ackumulering, och den missgynnar bolag som redan rusat. Värderingsmåtten bedöms till hälften mot bolagets sektor, så en bank jämförs med andra banker.</p>
+      <p>Kategoripoängen är ett viktat snitt, och totalpoängen är ett viktat snitt av kategorierna. Saknas data för ett kriterium räknas det inte med, men bolag med många luckor får ett avdrag på högst 25 %. Banker och fastighetsbolag hoppar över mått som inte passar dem, som skuldsättning och EV/EBITDA.</p>
+      <p>Klicka på ett bolag för att se vilka krav som uppfylls, nästan uppfylls eller inte uppfylls.</p>
+    </details>
+  </div>
+  <div class="tw"><table id="f_t"><thead></thead><tbody></tbody></table>
+    <div class="empty" id="f_empty" hidden>Inga bolag matchar filtren.</div>
+    <div class="empty"><button class="link" id="f_more" hidden></button></div></div>
+</section>
+
+<!-- ───────────── TURNAROUND ───────────── -->
+<section id="panel-turn" role="tabpanel" aria-labelledby="tab-turn" hidden>
+  <div class="panel">
+    <div class="controls">
+      <label>Sök bolag eller ticker<input type="search" id="t_q" placeholder="t.ex. Volvo"></label>
+      <label>Land<select id="t_land"><option value="">Alla länder</option></select></label>
+      <label>Börsvärde<select id="t_cap"><option value="">Alla klasser</option></select></label>
+      <label>Lägsta score: <span id="t_minv">0</span><input type="range" id="t_min" min="0" max="90" value="0"></label>
+    </div>
+    <details>
+      <summary>Så fungerar turnaround-screenern</summary>
+      <p>Den letar aktier som fallit länge och just börjat vända. Här visas bara tidig fas: kursen ligger under EMA 50, EMA 9 ligger under EMA 21, men EMA 9 har bottnat och vänt uppåt.</p>
+      <p>Aktien måste ha fallit minst 15 % på 12 månader eller 20 % på 6 månader, men inte mer än 65 % på 12 månader (fritt fall). Minst två vändningssignaler krävs, till exempel RSI som återhämtar sig, OBV-divergens, ackumuleringsvolym eller en ADX som mattas.</p>
+      <p>Score (0 till 100) summerar signalerna och är det som listan sorteras på. Vändningsstyrka (0 till 10) är en enklare räknare som visas som kompletterande information. Klicka på ett bolag för att se vilka signaler som slagit till.</p>
+    </details>
+  </div>
+  <div class="tw"><table id="t_t"><thead></thead><tbody></tbody></table>
+    <div class="empty" id="t_empty" hidden>Inga bolag matchar filtren.</div>
+    <div class="empty"><button class="link" id="t_more" hidden></button></div></div>
+</section>
+
+<footer id="foot"></footer>
+</main>
+
+<script>
+const D = __DATA__;
+const el = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt = (v, d = 0) => v == null ? '–' : v.toLocaleString('sv-SE', {minimumFractionDigits: d, maximumFractionDigits: d});
+const signed = (v, d = 0) => v == null ? '–' : (v > 0 ? '+' : '') + fmt(v, d);
+const stripIcon = s => String(s).replace(/^[^\p{L}\p{N}]+/u, '');
+
+/* ── Delad linjegraf: series = [{pts, color, dash, w}] ── */
+function lineChart(series, from, to, legend) {
+  const main = series[0].pts;
+  if (!main || main.length < 3) return '';
+  const Wd = 560, H = 170, P = 6, n = main.length;
+  const all = series.flatMap(s => s.pts.filter(v => v != null));
+  const mn = Math.min(...all), mx = Math.max(...all);
+  const X = i => P + i * (Wd - 2 * P) / (n - 1), Y = v => H - P - (v - mn) / ((mx - mn) || 1) * (H - 2 * P);
+  const path = a => { let d = '', pen = false; a.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); pen = true; }); return d; };
+  const svg = [...series].reverse().map(s => `<path d="${path(s.pts)}" fill="none" stroke="${s.color}" stroke-width="${s.w || 1.5}"${s.dash ? ' stroke-dasharray="4 3"' : ''}/>`).join('');
+  return `<svg class="ch" viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Kursutveckling">${svg}</svg>
+    <div class="lg">${legend.map(l => `<span><i style="background:${l[1]}"></i>${l[0]}</span>`).join('')}<span>${esc(from)} till ${esc(to)}</span></div>`;
+}
+
+/* ── Flikar ── */
+const TABS = {fund: 'fundamental', turn: 'turnaround'};
+function showTab(k, push) {
+  for (const t in TABS) {
+    const on = t === k;
+    el('tab-' + t).setAttribute('aria-selected', on);
+    el('tab-' + t).tabIndex = on ? 0 : -1;
+    el('panel-' + t).hidden = !on;
+  }
+  if (push) history.replaceState(null, '', '#' + TABS[k]);
+}
+for (const t in TABS) {
+  el('tab-' + t).addEventListener('click', () => showTab(t, true));
+  el('tab-' + t).addEventListener('keydown', e => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const o = t === 'fund' ? 'turn' : 'fund'; showTab(o, true); el('tab-' + o).focus();
+  });
+}
+
+/* ═════════════ FUNDAMENTAL ═════════════ */
+function initFund(F) {
+  const $ = id => el('f_' + id);
+  const C = F.companies, CATS = F.categories, M = F.meta;
+  const DEF = Object.fromEntries(CATS.map(c => [c.name, c.weight]));
+  let W = {...DEF};
+  const S0 = {q: '', sec: '', land: '', cap: '', min: 0, sort: 'total', dir: -1, open: null, limit: 100};
+  const S = {...S0};
+
+  function calc(c) {
+    let n = 0, den = 0, cn = 0, cd = 0;
+    for (const k in W) {
+      const x = c.cats[k], w = W[k];
+      if (!x || x.na || w <= 0) continue;
+      cd += w; cn += w * x.c;
+      if (x.s != null) { n += w * x.s; den += w; }
+    }
+    c.total = den ? Math.round(n / den * (F.minFactor + (1 - F.minFactor) * (cd ? cn / cd : 0)) * 10) / 10 : 0;
+  }
+  function status(r) {
+    if (r.na) return ['na', 'Ej relevant'];
+    if (r.ratio == null) return ['miss', 'Data saknas'];
+    if (r.ratio >= .9) return ['ok', 'Uppfyllt'];
+    if (r.ratio >= .5) return ['near', 'Nästan'];
+    if (r.ratio > 0) return ['part', 'Delvis'];
+    return ['no', 'Ej uppfyllt'];
+  }
+  const heat = s => s == null ? '<td class="heat na">–</td>'
+    : `<td class="heat" style="background:color-mix(in srgb,var(--accent) ${Math.round(s * .62)}%,transparent)">${fmt(s)}</td>`;
+
+  function detail(c) {
+    const rows = M.map((m, i) => ({...m, ratio: c.cr[i][0], val: c.cr[i][1], na: !!c.cr[i][2], rel: c.cr[i][3]}));
+    const strong = rows.filter(r => r.ratio != null && r.ratio >= .9).sort((a, b) => b.w - a.w).slice(0, 4);
+    const weak = rows.filter(r => r.ratio != null && r.ratio <= .3).sort((a, b) => b.w - a.w).slice(0, 4);
+    const li = r => `<li>${esc(r.name)}: ${esc(r.val)}</li>`;
+    const live = Object.keys(W).filter(k => W[k] > 0 && c.cats[k] && !c.cats[k].na);
+    const cov = live.length ? live.reduce((a, k) => a + W[k] * c.cats[k].c, 0) / live.reduce((a, k) => a + W[k], 0) : 0;
+    let tbl = '';
+    for (const cat of CATS.map(x => x.name)) {
+      const rs = rows.filter(r => r.cat === cat); if (!rs.length) continue;
+      const cc = c.cats[cat];
+      tbl += `<tr class="ch"><td colspan="4">${esc(cat)}${cc.na ? ' (ej relevant för sektorn)' : ` &ndash; ${cc.s == null ? 'data saknas' : fmt(cc.s) + ' av 100 p'}`} <span class="na" style="font-weight:400">vikt ${W[cat]}</span></td></tr>`;
+      for (const r of rs) {
+        const [cl, lb] = status(r);
+        tbl += `<tr><td>${esc(r.name)}<span class="rl">${esc(r.why)}</span><span class="rl">${esc(r.rule)}</span></td>
+          <td>${esc(r.val)}${r.rel != null ? `<span class="rl">billigare än ${fmt(r.rel * 100)} % av sektorn</span>` : ''}</td>
+          <td class="pt">${r.ratio == null ? '<span class="na">–</span>' : `<b>${fmt(r.ratio * 100)}</b> p<div class="bar"><i style="width:${r.ratio * 100}%"></i></div>`}</td>
+          <td><span class="chip ${cl}">${lb}</span></td></tr>`;
+      }
+    }
+    const link = c.website ? `<a href="${esc(c.website)}" target="_blank" rel="noopener">Bolagets webbplats</a> &nbsp; ` : '';
+    const s = c.spark;
+    const ch = s ? lineChart([{pts: s.c, color: 'var(--ink)', w: 1.8}, {pts: s.s50, color: 'var(--accent)'}, {pts: s.s200, color: 'var(--near)', dash: 1}],
+      s.from, s.to, [['Kurs', 'var(--ink)'], ['SMA 50', 'var(--accent)'], ['SMA 200', 'var(--near)']]) : '';
+    return `<div class="dg"><div>
+      <h3>${esc(c.name)}</h3>
+      <p>${esc(c.summary) || 'Ingen bolagsbeskrivning tillgänglig.'}${c.summary.length >= 360 ? '…' : ''}</p>
+      <dl class="facts"><dt>Sektor</dt><dd>${esc(c.sector)}${c.industry ? ', ' + esc(c.industry) : ''}</dd>
+        <dt>Land</dt><dd>${esc(c.country) || esc(c.land) || '–'}</dd><dt>Kurs</dt><dd>${fmt(c.price, 2)} ${esc(c.currency)}</dd>
+        <dt>Börsvärde</dt><dd>${esc(c.mcap_txt)} ${esc(c.currency)}</dd><dt>Datatäckning</dt><dd>${fmt(cov * 100)} %</dd></dl>
+      <p>${link}<a href="https://finance.yahoo.com/quote/${encodeURIComponent(c.ticker)}" target="_blank" rel="noopener">Öppna på Yahoo Finance</a></p>
+      <h4>Kursutveckling, 1 år</h4>${ch}
+      <h4>Starkaste kraven</h4>${strong.length ? `<ul class="pl s">${strong.map(li).join('')}</ul>` : '<p>Inga krav är helt uppfyllda.</p>'}
+      <h4>Svagaste kraven</h4>${weak.length ? `<ul class="pl w">${weak.map(li).join('')}</ul>` : '<p>Inga uppenbara svagheter.</p>'}
+    </div><div>
+      <table class="ct"><thead><tr><th>Kriterium</th><th>Värde</th><th>Poäng</th><th>Status</th></tr></thead><tbody>${tbl}</tbody></table>
+    </div></div>`;
+  }
+
+  function render() {
+    C.forEach(calc);
+    [...C].sort((a, b) => b.total - a.total).forEach((c, i) => c.rank = i + 1);
+    const q = S.q.toLowerCase();
+    let L = C.filter(c => (!q || (c.name + ' ' + c.ticker).toLowerCase().includes(q)) && (!S.sec || c.sector === S.sec) && (!S.land || c.land === S.land) && (!S.cap || c.cap === S.cap) && c.total >= S.min);
+    const val = c => S.sort === 'total' ? c.total : S.sort === 'name' ? c.name.toLowerCase() : S.sort === 'mcap' ? (c.mcap ?? -1)
+      : (c.cats[S.sort] && c.cats[S.sort].s != null ? c.cats[S.sort].s : -1);
+    L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * S.dir; });
+    const th = (k, t, cls = '') => `<th class="${cls}" data-k="${esc(k)}" tabindex="0" ${S.sort === k ? `aria-sort="${S.dir < 0 ? 'descending' : 'ascending'}"` : ''}>${esc(t)}${S.sort === k ? (S.dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
+    $('t').tHead.innerHTML = '<tr><th>#</th>' + th('name', 'Bolag') + th('total', 'Totalpoäng') + CATS.map(c => th(c.name, c.name, 'n')).join('') + th('mcap', 'Börsvärde', 'n') + '</tr>';
+    let h = '';
+    const total = L.length;
+    L = L.slice(0, S.limit);
+    for (const c of L) {
+      const open = S.open === c.ticker;
+      h += `<tr class="row" data-t="${esc(c.ticker)}"><td class="rk">${c.rank}</td>
+        <td><button class="nm" aria-expanded="${open}">${esc(c.name)}</button><span class="tk">${esc(c.ticker)}, ${esc(c.land)}${c.cap ? ' ' + esc(c.cap) : ''}, ${esc(c.sector)}</span></td>
+        <td class="sc"><b>${fmt(c.total, 1)}</b><div class="bar"><i style="width:${c.total}%"></i></div></td>
+        ${CATS.map(k => heat(c.cats[k.name].na ? null : c.cats[k.name].s)).join('')}
+        <td class="n">${esc(c.mcap_txt)}</td></tr>`;
+      if (open) h += `<tr class="det"><td colspan="${CATS.length + 4}">${detail(c)}</td></tr>`;
+    }
+    $('t').tBodies[0].innerHTML = h;
+    $('empty').hidden = total > 0;
+    $('more').hidden = total <= S.limit;
+    $('more').textContent = `Visar ${L.length} av ${total}. Visa 100 till`;
+  }
+
+  el('cnt-fund').textContent = C.length;
+  [...new Set(C.map(c => c.sector))].sort().forEach(s => $('sec').insertAdjacentHTML('beforeend', `<option>${esc(s)}</option>`));
+  [...new Set(C.map(c => c.land).filter(Boolean))].sort().forEach(s => $('land').insertAdjacentHTML('beforeend', `<option>${esc(s)}</option>`));
+  ['mega', 'large', 'mid', 'small', 'micro'].filter(k => C.some(c => c.cap === k)).forEach(s => $('cap').insertAdjacentHTML('beforeend', `<option>${s}</option>`));
+  if (F.noFund > 0) { $('note').hidden = false; $('note').textContent = `Nyckeltal saknades för ${F.noFund} bolag vid senaste körningen (Yahoo Finance begränsar ibland antalet anrop). De poängsätts bara på teknik och får avdrag för låg datatäckning.`; }
+  $('sl').innerHTML = CATS.map(c => `<label>${esc(c.name)} <b id="fv_${esc(c.name)}">${c.weight}</b><input type="range" min="0" max="50" value="${c.weight}" data-c="${esc(c.name)}" style="width:100%"></label>`).join('');
+  $('sl').addEventListener('input', e => { const k = e.target.dataset.c; if (!k) return; W[k] = +e.target.value; el('fv_' + k).textContent = W[k]; render(); });
+  $('reset').onclick = () => { W = {...DEF}; $('sl').querySelectorAll('input').forEach(i => { i.value = W[i.dataset.c]; el('fv_' + i.dataset.c).textContent = W[i.dataset.c]; }); render(); };
+  $('q').oninput = e => { S.q = e.target.value; S.limit = 100; render(); };
+  $('sec').onchange = e => { S.sec = e.target.value; S.limit = 100; render(); };
+  $('land').onchange = e => { S.land = e.target.value; S.limit = 100; render(); };
+  $('cap').onchange = e => { S.cap = e.target.value; S.limit = 100; render(); };
+  $('min').oninput = e => { S.min = +e.target.value; $('minv').textContent = S.min; S.limit = 100; render(); };
+  $('more').onclick = () => { S.limit += 100; render(); };
+  const sortBy = th => { const k = th && th.dataset.k; if (!k) return; S.dir = S.sort === k ? -S.dir : (k === 'name' ? 1 : -1); S.sort = k; render(); };
+  $('t').addEventListener('click', e => {
+    const th = e.target.closest('th'); if (th) return sortBy(th);
+    const tr = e.target.closest('tr.row'); if (!tr) return;
+    S.open = S.open === tr.dataset.t ? null : tr.dataset.t; render();
+    const b = $('t').querySelector(`tr.row[data-t="${CSS.escape(tr.dataset.t)}"] .nm`); if (b) b.focus({preventScroll: true});
+  });
+  $('t').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'TH') sortBy(e.target); });
+  render();
+}
+
+/* ═════════════ TURNAROUND ═════════════ */
+function initTurn(T) {
+  const $ = id => el('t_' + id);
+  const C = T.companies;
+  C.forEach((c, i) => c.rank = i + 1);            // listan kommer redan sorterad på Score (0-100)
+  const S = {q: '', land: '', cap: '', min: 0, sort: 'Score', dir: -1, open: null, limit: 100};
+  const COLS = [
+    ['Score', 'Score (av 100)'], ['VandStyrka', 'Vändning (av 10)'], ['p12m%', '12 mån'], ['p6m%', '6 mån'],
+    ['p3m%', '3 mån'], ['p1w%', '1 vecka'], ['RSI', 'RSI'], ['ADX', 'ADX'], ['CMF', 'CMF'], ['VolRatio', 'Volym'], ['Kurs', 'Kurs'],
+  ];
+  const pc = v => `<span class="${v > 0 ? 'pos' : v < 0 ? 'neg' : ''}">${signed(v, 1)} %</span>`;
+  const sub = c => [c.Land, c.Cap, c.Sektor].filter(Boolean).map(esc).join(', ');
+
+  function detail(c) {
+    const s = c.spark;
+    const ch = s ? lineChart([{pts: s.c, color: 'var(--ink)', w: 1.8}, {pts: s.e9, color: 'var(--accent)'}, {pts: s.e21, color: 'var(--near)'}, {pts: s.e50, color: 'var(--part)', dash: 1}],
+      s.from, s.to, [['Kurs', 'var(--ink)'], ['EMA 9', 'var(--accent)'], ['EMA 21', 'var(--near)'], ['EMA 50', 'var(--part)']]) : '';
+    const sig = (c.signaler || []).map(x => `<li>${esc(stripIcon(x))}</li>`).join('');
+    const warn = (c.varningar || []).map(x => `<li>${esc(stripIcon(x))}</li>`).join('');
+    const row = (n, v, h) => `<tr><td>${n}<span class="rl">${h}</span></td><td>${v}</td></tr>`;
+    const tbl = [
+      row('Kursutveckling', `1 dag ${pc(c['p1d%'])}, 1 vecka ${pc(c['p1w%'])}, 3 mån ${pc(c['p3m%'])}, 6 mån ${pc(c['p6m%'])}, 12 mån ${pc(c['p12m%'])}`, 'Den historiska svagheten som gör bolaget till en turnaround-kandidat.'),
+      row('RSI (14)', `${fmt(c.RSI)} (lutning ${signed(c.RSISlope, 1)})`, 'Under 30 är översålt. En stigande RSI från låga nivåer är ett tidigt vändningstecken.'),
+      row('ADX, DI+ och DI-', `${fmt(c.ADX)}, ${fmt(c.DI_plus)} och ${fmt(c.DI_minus)}`, 'Faller ADX och närmar sig DI+ DI- mattas nedtrenden.'),
+      row('CMF (20 dagar)', fmt(c.CMF, 2), 'Positivt värde betyder att pengar flödar in trots svag kurs.'),
+      row('Volym', `${fmt(c.VolRatio, 2)}× senaste 5 dagarna, uppdagar/nerdagar ${fmt(c.UdVol, 2)}`, 'Volym över 1 och fler köpdagar än säljdagar tyder på ackumulering.'),
+      row('Kurs mot EMA 50 och SMA 200', `${signed(c['EMA50%'], 1)} % och ${signed(c['SMA200%'], 1)} %`, 'Negativa värden betyder att kursen fortfarande ligger under trendlinjerna, alltså tidig fas.'),
+      row('Placering i 52-veckorsspannet', `${fmt(c['Pos52v%'])} %`, '0 % är årslägsta, 100 % är årshögsta.'),
+      row('Största nedgång, 120 dagar', `${fmt(c['MaxDD%'], 1)} %`, 'Hur djupt bolaget fallit från sin senaste topp.'),
+      row('Relativ styrka mot index', `${signed(c.RS, 1)} (acceleration ${signed(c.RS_acc, 1)})`, 'Positiv acceleration betyder att aktien börjat slå sitt jämförelseindex.'),
+      row('Volatilitet (ATR)', `${fmt(c['ATR%'], 1)} % per dag`, 'Hög volatilitet betyder större svängningar och större risk.'),
+    ].join('');
+    return `<div class="dg"><div>
+      <h3>${esc(c.Namn)}</h3>
+      <dl class="facts"><dt>Ticker</dt><dd>${esc(c.Ticker)}</dd><dt>Land</dt><dd>${esc(c.Land) || '–'} ${c.Cap ? '(' + esc(c.Cap) + ')' : ''}</dd>
+        <dt>Bransch</dt><dd>${esc(c.Sektor) || '–'}</dd><dt>Kurs</dt><dd>${fmt(c.Kurs, 2)}</dd>
+        <dt>Score</dt><dd><b>${fmt(c.Score)}</b> av 100</dd><dt>Vändningsstyrka</dt><dd>${fmt(c.VandStyrka)} av 10</dd></dl>
+      <p><a href="https://finance.yahoo.com/quote/${encodeURIComponent(c.Ticker)}" target="_blank" rel="noopener">Öppna på Yahoo Finance</a></p>
+      <h4>Kursutveckling, cirka 6 månader</h4>${ch}
+      <h4>Aktiva vändningssignaler</h4>${sig ? `<ul class="pl s">${sig}</ul>` : '<p>Inga.</p>'}
+      ${warn ? `<h4>Varningar</h4><ul class="pl w">${warn}</ul>` : ''}
+    </div><div>
+      <table class="ct"><thead><tr><th>Nyckeltal</th><th>Värde</th></tr></thead><tbody>${tbl}</tbody></table>
+    </div></div>`;
+  }
+
+  function render() {
+    const q = S.q.toLowerCase();
+    let L = C.filter(c => (!q || (c.Namn + ' ' + c.Ticker).toLowerCase().includes(q)) && (!S.land || c.Land === S.land) && (!S.cap || c.Cap === S.cap) && c.Score >= S.min);
+    const val = c => S.sort === 'name' ? c.Namn.toLowerCase() : (c[S.sort] ?? -1e9);
+    L.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : (b.VandStyrka - a.VandStyrka) * (S.dir < 0 ? 1 : -1)) * (x === y ? 1 : S.dir); });
+    const th = (k, t, cls = '') => `<th class="${cls}" data-k="${esc(k)}" tabindex="0" ${S.sort === k ? `aria-sort="${S.dir < 0 ? 'descending' : 'ascending'}"` : ''}>${esc(t)}${S.sort === k ? (S.dir < 0 ? ' ▾' : ' ▴') : ''}</th>`;
+    $('t').tHead.innerHTML = '<tr><th>#</th>' + th('name', 'Bolag') + COLS.map(([k, t], i) => th(k, t, i ? 'n' : '')).join('') + '</tr>';
+    const total = L.length;
+    L = L.slice(0, S.limit);
+    let h = '';
+    for (const c of L) {
+      const open = S.open === c.Ticker;
+      h += `<tr class="row" data-t="${esc(c.Ticker)}"><td class="rk">${c.rank}</td>
+        <td><button class="nm" aria-expanded="${open}">${esc(c.Namn)}</button><span class="tk">${esc(c.Ticker)}, ${sub(c)}</span></td>
+        <td class="sc"><b>${fmt(c.Score)}</b><span class="of">/100</span><div class="bar"><i style="width:${c.Score}%"></i></div></td>
+        <td class="n">${fmt(c.VandStyrka)}<span class="of">/10</span></td>
+        <td class="n">${pc(c['p12m%'])}</td><td class="n">${pc(c['p6m%'])}</td><td class="n">${pc(c['p3m%'])}</td><td class="n">${pc(c['p1w%'])}</td>
+        <td class="n">${fmt(c.RSI)}</td><td class="n">${fmt(c.ADX)}</td><td class="n">${fmt(c.CMF, 2)}</td><td class="n">${fmt(c.VolRatio, 2)}×</td><td class="n">${fmt(c.Kurs, 2)}</td></tr>`;
+      if (open) h += `<tr class="det"><td colspan="${COLS.length + 2}">${detail(c)}</td></tr>`;
+    }
+    $('t').tBodies[0].innerHTML = h;
+    $('empty').hidden = total > 0;
+    $('empty').textContent = C.length ? 'Inga bolag matchar filtren.' : 'Inga bolag i tidig turnaround-fas vid senaste körningen.';
+    $('more').hidden = total <= S.limit;
+    $('more').textContent = `Visar ${L.length} av ${total}. Visa 100 till`;
+  }
+
+  el('cnt-turn').textContent = C.length;
+  [...new Set(C.map(c => c.Land).filter(Boolean))].sort().forEach(s => $('land').insertAdjacentHTML('beforeend', `<option>${esc(s)}</option>`));
+  ['mega', 'large', 'mid', 'small', 'micro'].filter(k => C.some(c => c.Cap === k)).forEach(s => $('cap').insertAdjacentHTML('beforeend', `<option>${s}</option>`));
+  $('q').oninput = e => { S.q = e.target.value; S.limit = 100; render(); };
+  $('land').onchange = e => { S.land = e.target.value; S.limit = 100; render(); };
+  $('cap').onchange = e => { S.cap = e.target.value; S.limit = 100; render(); };
+  $('min').oninput = e => { S.min = +e.target.value; $('minv').textContent = S.min; S.limit = 100; render(); };
+  $('more').onclick = () => { S.limit += 100; render(); };
+  const sortBy = th => { const k = th && th.dataset.k; if (!k) return; S.dir = S.sort === k ? -S.dir : (k === 'name' ? 1 : -1); S.sort = k; render(); };
+  $('t').addEventListener('click', e => {
+    const th = e.target.closest('th'); if (th) return sortBy(th);
+    const tr = e.target.closest('tr.row'); if (!tr) return;
+    S.open = S.open === tr.dataset.t ? null : tr.dataset.t; render();
+    const b = $('t').querySelector(`tr.row[data-t="${CSS.escape(tr.dataset.t)}"] .nm`); if (b) b.focus({preventScroll: true});
+  });
+  $('t').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'TH') sortBy(e.target); });
+  render();
+}
+
+/* ── Start ── */
+el('sub').textContent = `Uppdaterad ${D.generated} (svensk tid). Data från Yahoo Finance. ${D.fund.companies.length} bolag poängsatta i fundamental-screenern och ${D.turn.companies.length} i tidig turnaround-fas av ${D.turn.screened} screenade.`;
+el('demo').hidden = !D.demo;
+el('foot').innerHTML = 'Verktyget sorterar data och är inte finansiell rådgivning. Yahoo Finance-data kan vara ofullständig eller fördröjd, så kontrollera alltid siffrorna mot bolagets rapporter. Ladda ner som CSV: <a href="fundamental.csv">fundamental</a> och <a href="turnaround.csv">turnaround</a>.' + (D.fund.failed.length ? ` Kursdata saknades för ${D.fund.failed.length} tickers i listan.` : '');
+initFund(D.fund);
+initTurn(D.turn);
+showTab(location.hash === '#turnaround' ? 'turn' : 'fund', false);
+</script>
+</body>
+</html>
