@@ -4,11 +4,11 @@ on:
   schedule:
     # GitHub kör schemat i UTC och känner inte till sommartid. Därför schemaläggs både
     # sommar- och vintertid, och steget "check" släpper bara igenom körningen när klockan
-    # i Stockholm faktiskt är 10 eller 16. Bara vardagar, eftersom börserna är stängda på helger.
-    - cron: "0 8 * * 1-5"    # 10:00 sommartid, 09:00 vintertid
-    - cron: "0 9 * * 1-5"    # 11:00 sommartid, 10:00 vintertid
-    - cron: "0 14 * * 1-5"   # 16:00 sommartid, 15:00 vintertid
-    - cron: "0 15 * * 1-5"   # 17:00 sommartid, 16:00 vintertid
+    # i Stockholm faktiskt är 10 eller 16. Alla veckodagar (på helger visar rapporten fredagens stängningskurser).
+    - cron: "0 8 * * *"    # 10:00 sommartid, 09:00 vintertid
+    - cron: "0 9 * * *"    # 11:00 sommartid, 10:00 vintertid
+    - cron: "0 14 * * *"   # 16:00 sommartid, 15:00 vintertid
+    - cron: "0 15 * * *"   # 17:00 sommartid, 16:00 vintertid
   workflow_dispatch:         # knapp "Run workflow" för manuell körning
 
 permissions:
